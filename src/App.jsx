@@ -21,9 +21,10 @@ function criarIcone(cor) {
 }
 
 const icones = {
-    UPA:  criarIcone('#ef4444'),
-    CAIS: criarIcone('#3b82f6'),
-    CIAM: criarIcone('#22c55e'),
+    UPA:      criarIcone('#ef4444'),
+    CAIS:     criarIcone('#3b82f6'),
+    CIAM:     criarIcone('#22c55e'),
+    Hospital: criarIcone('#a855f7'), // roxo
 }
 
 // Opções de tempo de espera que o usuário pode escolher
@@ -132,15 +133,18 @@ function App() {
             )}
 
             <div className="flex gap-4 justify-center bg-white p-3 shadow text-sm font-medium">
-        <span className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-red-500 inline-block"></span> UPA
-        </span>
+  <span className="flex items-center gap-2">
+    <span className="w-3 h-3 rounded-full bg-red-500 inline-block"></span> UPA
+  </span>
                 <span className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> CAIS
-        </span>
+    <span className="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> CAIS
+  </span>
                 <span className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-green-500 inline-block"></span> CIAM
-        </span>
+    <span className="w-3 h-3 rounded-full bg-green-500 inline-block"></span> CIAM
+  </span>
+                <span className="flex items-center gap-2">
+    <span className="w-3 h-3 rounded-full bg-purple-500 inline-block"></span> Hospital
+  </span>
             </div>
 
             <div className="flex flex-1 gap-4 p-4">
@@ -155,9 +159,10 @@ function App() {
                         <div key={unidade.id} className="mb-2 p-2 rounded-lg border border-gray-200">
                             <div className="flex items-center gap-2">
                 <span className={`w-3 h-3 rounded-full inline-block ${
-                    unidade.tipo === 'UPA'  ? 'bg-red-500'   :
-                        unidade.tipo === 'CAIS' ? 'bg-blue-500'  :
-                            'bg-green-500'
+                    unidade.tipo === 'UPA'      ? 'bg-red-500'    :
+                        unidade.tipo === 'CAIS'     ? 'bg-blue-500'   :
+                            unidade.tipo === 'Hospital' ? 'bg-purple-500' :
+                                'bg-green-500'
                 }`}></span>
                                 <span className="font-medium text-sm text-gray-800">{unidade.nome}</span>
                             </div>
