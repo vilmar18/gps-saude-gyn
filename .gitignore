@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Variaveis de ambiente (chaves sensiveis)
+.env
