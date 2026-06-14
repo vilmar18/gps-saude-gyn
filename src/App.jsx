@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { supabase } from './supabase'
 import MinhasConsultas from './MinhasConsultas'
+import Atendente from './Atendente'
 
 function criarIcone(cor) {
     return L.divIcon({
@@ -108,10 +109,19 @@ function App() {
                 >
                     Minhas Consultas
                 </button>
+                <button
+                    onClick={() => setTela('atendente')}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                        tela === 'atendente' ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700'
+                    }`}
+                >
+                    Atendente
+                </button>
             </div>
 
             {/* Tela de consultas do paciente */}
             {tela === 'consultas' && <MinhasConsultas />}
+            {tela === 'atendente' && <Atendente />}
 
             {/* Tela do mapa */}
             {tela === 'mapa' && (

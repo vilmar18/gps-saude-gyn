@@ -63,7 +63,7 @@ function MinhasConsultas() {
     }
 
     return (
-        <div className="flex flex-col items-center p-4">
+        <div className="flex flex-col items-center p-4 min-h-screen bg-gray-100">
 
             <form onSubmit={buscarConsultas} className="bg-white rounded-xl shadow p-6 w-full max-w-md mt-4">
                 <h2 className="text-lg font-bold text-gray-700 mb-4">Consultar meu agendamento</h2>
