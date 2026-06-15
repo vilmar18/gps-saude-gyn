@@ -147,9 +147,9 @@ function App() {
             </span>
                     </div>
 
-                    <div className="flex flex-1 gap-4 p-4">
+                    <div className="flex flex-col lg:flex-row flex-1 gap-4 p-4">
 
-                        <div className="w-80 bg-white rounded-xl shadow p-3 overflow-y-auto max-h-[80vh]">
+                        <div className="w-full lg:w-80 bg-white rounded-xl shadow p-3 overflow-y-auto max-h-[40vh] lg:max-h-[80vh]">
                             <h2 className="font-bold text-gray-700 mb-3 text-lg">Unidades de Saúde</h2>
                             {carregando && <p className="text-sm text-gray-500">Carregando...</p>}
                             {unidades.map((unidade) => (
@@ -201,7 +201,7 @@ function App() {
                             <MapContainer
                                 center={[-16.6869, -49.2648]}
                                 zoom={12}
-                                style={{ height: '80vh', width: '100%', borderRadius: '12px' }}
+                                style={{ height: '50vh', width: '100%', borderRadius: '12px' }}
                             >
                                 <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
