@@ -222,14 +222,25 @@ function App() {
                                             <p className="text-xs text-gray-400 mt-0.5">{unidade.endereco}</p>
                                         )}
                                         <a
-                                            href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="mt-1 text-xs text-green-600 underline block"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            Como chegar
-                                        </a>
+                                            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+
+                                                    href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ color: '#16a34a', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}
+                                                >
+                                                    Google Maps
+                                                </a>
+                                                <span style={{ color: '#d1d5db' }}>|</span>
+
+                                                    href={`https://waze.com/ul?ll=${unidade.lat},${unidade.lng}&navigate=yes`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{ color: '#3b82f6', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}
+                                                >
+                                                    Waze
+                                                </a>
+                                            </div>
                                         {ultimosReportes[unidade.id] ? (
                                             <p className="text-xs text-orange-600 mt-1 font-medium">
                                                 Espera: {ultimosReportes[unidade.id]}
