@@ -6,7 +6,6 @@ import { supabase } from './supabase'
 import MinhasConsultas from './MinhasConsultas'
 import Atendente from './Atendente'
 
-// ─── Ícones ───────────────────────────────────────────────────────────────────
 function criarIcone(cor) {
     return L.divIcon({
         className: '',
@@ -44,7 +43,6 @@ const opcoesTempo = [
     'Mais de 2 horas',
 ]
 
-// ─── Componente auxiliar: centraliza o mapa quando a unidade muda ─────────────
 function ControlarMapa({ unidade }) {
     const map = useMap()
     useEffect(() => {
@@ -55,12 +53,11 @@ function ControlarMapa({ unidade }) {
     return null
 }
 
-// ─── App principal ────────────────────────────────────────────────────────────
 function App() {
     const [unidades, setUnidades] = useState([])
     const [carregando, setCarregando] = useState(true)
     const [unidadeSelecionada, setUnidadeSelecionada] = useState(null)
-    const [unidadeFoco, setUnidadeFoco] = useState(null) // para centralizar mapa
+    const [unidadeFoco, setUnidadeFoco] = useState(null)
     const [ultimosReportes, setUltimosReportes] = useState({})
     const [mensagem, setMensagem] = useState('')
     const [tela, setTela] = useState('mapa')
@@ -108,23 +105,20 @@ function App() {
     function selecionarUnidade(unidade) {
         setUnidadeFoco(unidade)
         setUnidadeSelecionada(unidadeSelecionada === unidade.id ? null : unidade.id)
-        // Abre popup no mapa
         setTimeout(() => {
             const ref = markerRefs.current[unidade.id]
             if (ref) ref.openPopup()
-        }, 900) // aguarda o flyTo terminar
+        }, 900)
     }
 
     return (
         <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
 
-            {/* ── Header ── */}
             <header className="bg-blue-700 text-white px-4 py-3 shadow-md flex-shrink-0">
                 <h1 className="text-xl font-bold text-center">GPS da Saúde GYN</h1>
                 <p className="text-center text-xs mt-0.5 opacity-80">Unidades de saúde de Goiânia em tempo real</p>
             </header>
 
-            {/* ── Navegação ── */}
             <div className="flex justify-center gap-2 bg-white px-2 py-2 shadow flex-shrink-0">
                 {['mapa', 'consultas', 'atendente'].map((t) => (
                     <button
@@ -139,32 +133,27 @@ function App() {
                 ))}
             </div>
 
-            {/* ── Telas secundárias ── */}
             {tela === 'consultas' && <div className="flex-1 overflow-y-auto"><MinhasConsultas /></div>}
             {tela === 'atendente' && <div className="flex-1 overflow-y-auto"><Atendente /></div>}
 
-            {/* ── Tela do mapa ── */}
             {tela === 'mapa' && (
                 <div className="flex-1 relative overflow-hidden">
 
-                    {/* Feedback de reporte */}
                     {mensagem && (
                         <div className="absolute top-2 left-1/2 -translate-x-1/2 z-[1000] bg-green-600 text-white text-sm px-4 py-2 rounded-full shadow-lg">
                             {mensagem}
                         </div>
                     )}
 
-                    {/* Legenda */}
                     <div className="absolute top-2 right-2 z-[1000] bg-white rounded-xl shadow px-3 py-2 flex flex-col gap-1 text-xs font-medium">
                         {Object.entries(corPorTipo).map(([tipo, cor]) => (
                             <span key={tipo} className="flex items-center gap-1.5">
-                <span className={`w-2.5 h-2.5 rounded-full inline-block ${cor}`}></span>
+                                <span className={`w-2.5 h-2.5 rounded-full inline-block ${cor}`}></span>
                                 {tipo}
-              </span>
+                            </span>
                         ))}
                     </div>
 
-                    {/* Mapa — ocupa tela inteira */}
                     <MapContainer
                         center={[-16.6869, -49.2648]}
                         zoom={12}
@@ -195,27 +184,24 @@ function App() {
                         ))}
                     </MapContainer>
 
-                    {/* ── Drawer inferior ── */}
                     <div
                         className={`absolute bottom-0 left-0 right-0 z-[1000] bg-white rounded-t-2xl shadow-2xl transition-all duration-300 ${
                             drawerAberto ? 'h-[65vh]' : 'h-[72px]'
                         }`}
                     >
-                        {/* Alça do drawer */}
                         <div
                             className="flex flex-col items-center pt-2 pb-1 cursor-pointer"
                             onClick={() => setDrawerAberto(!drawerAberto)}
                         >
                             <div className="w-10 h-1 bg-gray-300 rounded-full mb-2"></div>
                             <div className="flex justify-between items-center w-full px-4">
-                <span className="font-bold text-gray-700 text-sm">
-                  {carregando ? 'Carregando...' : `${unidades.length} unidades de saúde`}
-                </span>
+                                <span className="font-bold text-gray-700 text-sm">
+                                    {carregando ? 'Carregando...' : `${unidades.length} unidades de saúde`}
+                                </span>
                                 <span className="text-gray-400 text-xs">{drawerAberto ? '▼ Fechar' : '▲ Ver lista'}</span>
                             </div>
                         </div>
 
-                        {/* Lista de unidades */}
                         <div className="overflow-y-auto h-[calc(100%-72px)] px-3 pb-4">
                             {unidades.map((unidade) => (
                                 <div
@@ -233,28 +219,28 @@ function App() {
                                     </div>
 
                                     <div className="ml-5 mt-0.5">
-                                      <span className="text-xs text-gray-500">{unidade.tipo}</span>
-                                      {unidade.endereco && (
-                                        <p className="text-xs text-gray-400 mt-0.5">{unidade.endereco}</p>
-                                      )}
-
-                                        href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="ml-5 mt-1 text-xs text-green-600 underline block"
-                                      >
-                                        📍 Como chegar
-                                      </a>
-                                      {ultimosReportes[unidade.id] ? (
-                                        <p className="text-xs text-orange-600 mt-1 font-medium">
-                                          ⏱ {ultimosReportes[unidade.id]}
-                                        </p>
-                                      ) : (
-                                        <p className="text-xs text-gray-300 mt-1">Sem reporte recente</p>
-                                      )}
+                                        <span className="text-xs text-gray-500">{unidade.tipo}</span>
+                                        {unidade.endereco && (
+                                            <p className="text-xs text-gray-400 mt-0.5">{unidade.endereco}</p>
+                                        )}
+                                        <a
+                                            href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="mt-1 text-xs text-green-600 underline block"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            📍 Como chegar
+                                        </a>
+                                        {ultimosReportes[unidade.id] ? (
+                                            <p className="text-xs text-orange-600 mt-1 font-medium">
+                                                ⏱ {ultimosReportes[unidade.id]}
+                                            </p>
+                                        ) : (
+                                            <p className="text-xs text-gray-300 mt-1">Sem reporte recente</p>
+                                        )}
                                     </div>
 
-                                    {/* Formulário de reporte */}
                                     {unidadeSelecionada === unidade.id && (
                                         <div className="ml-5 mt-3" onClick={(e) => e.stopPropagation()}>
                                             <p className="text-xs font-semibold text-gray-600 mb-1">Qual o tempo de espera agora?</p>
@@ -278,7 +264,6 @@ function App() {
                                         </div>
                                     )}
 
-                                    {/* Botão reportar — só quando fechado */}
                                     {unidadeSelecionada !== unidade.id && (
                                         <button
                                             onClick={(e) => { e.stopPropagation(); selecionarUnidade(unidade) }}
