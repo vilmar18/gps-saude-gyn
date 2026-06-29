@@ -9,13 +9,7 @@ import Atendente from './Atendente'
 function criarIcone(cor) {
     return L.divIcon({
         className: '',
-        html: `<div style="
-      background-color: ${cor};
-      width: 16px; height: 16px;
-      border-radius: 50%;
-      border: 2px solid white;
-      box-shadow: 0 0 4px rgba(0,0,0,0.5);
-    "></div>`,
+        html: `<div style="background-color: ${cor}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>`,
         iconSize: [16, 16],
         iconAnchor: [8, 8],
     })
@@ -37,7 +31,7 @@ const corPorTipo = {
 
 const opcoesTempo = [
     'Sem espera',
-    'Até 30 minutos',
+    'Ate 30 minutos',
     '30 min a 1 hora',
     '1 a 2 horas',
     'Mais de 2 horas',
@@ -115,8 +109,8 @@ function App() {
         <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
 
             <header className="bg-blue-700 text-white px-4 py-3 shadow-md flex-shrink-0">
-                <h1 className="text-xl font-bold text-center">GPS da Saúde GYN</h1>
-                <p className="text-center text-xs mt-0.5 opacity-80">Unidades de saúde de Goiânia em tempo real</p>
+                <h1 className="text-xl font-bold text-center">GPS da Saude GYN</h1>
+                <p className="text-center text-xs mt-0.5 opacity-80">Unidades de saude de Goiania em tempo real</p>
             </header>
 
             <div className="flex justify-center gap-2 bg-white px-2 py-2 shadow flex-shrink-0">
@@ -124,9 +118,7 @@ function App() {
                     <button
                         key={t}
                         onClick={() => setTela(t)}
-                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                            tela === t ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700'
-                        }`}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${tela === t ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700'}`}
                     >
                         {t === 'mapa' ? 'Mapa' : t === 'consultas' ? 'Minhas Consultas' : 'Atendente'}
                     </button>
@@ -172,32 +164,33 @@ function App() {
                                 icon={icones[unidade.tipo] || icones['UPA']}
                                 ref={(ref) => { if (ref) markerRefs.current[unidade.id] = ref }}
                             >
-                               <Popup>
-                                   <strong>{unidade.nome}</strong><br />
-                                   {unidade.tipo}
-                                   {unidade.endereco && <><br />{unidade.endereco}</>}
-                                   {ultimosReportes[unidade.id] && (
-                                       <><br /><span style={{ color: '#ea580c' }}>⏱ Espera: {ultimosReportes[unidade.id]}</span></>
-                                   )}
-                                   <br />
-
-                                       href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
-                                       target="_blank"
-                                       rel="noopener noreferrer"
-                                       style={{ color: '#16a34a', fontSize: '12px' }}
-                                   >
-                                       📍 Como chegar
-                                   </a>
-                               </Popup>
+                                <Popup>
+                                    <div style={{ minWidth: '160px' }}>
+                                        <strong style={{ fontSize: '13px' }}>{unidade.nome}</strong>
+                                        <br />
+                                        <span style={{ fontSize: '11px', color: '#6b7280' }}>{unidade.tipo}</span>
+                                        {unidade.endereco && (
+                                            <><br /><span style={{ fontSize: '11px', color: '#9ca3af' }}>{unidade.endereco}</span></>
+                                        )}
+                                        {ultimosReportes[unidade.id] && (
+                                            <><br /><span style={{ fontSize: '11px', color: '#ea580c' }}>Espera: {ultimosReportes[unidade.id]}</span></>
+                                        )}
+                                        <br /><br />
+                                        <a
+                                            href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#16a34a', fontSize: '13px', fontWeight: 'bold', textDecoration: 'underline' }}
+                                        >
+                                            Como chegar
+                                        </a>
+                                    </div>
+                                </Popup>
                             </Marker>
                         ))}
                     </MapContainer>
 
-                    <div
-                        className={`absolute bottom-0 left-0 right-0 z-[1000] bg-white rounded-t-2xl shadow-2xl transition-all duration-300 ${
-                            drawerAberto ? 'h-[65vh]' : 'h-[72px]'
-                        }`}
-                    >
+                    <div className={`absolute bottom-0 left-0 right-0 z-[1000] bg-white rounded-t-2xl shadow-2xl transition-all duration-300 ${drawerAberto ? 'h-[65vh]' : 'h-[72px]'}`}>
                         <div
                             className="flex flex-col items-center pt-2 pb-1 cursor-pointer"
                             onClick={() => setDrawerAberto(!drawerAberto)}
@@ -205,9 +198,9 @@ function App() {
                             <div className="w-10 h-1 bg-gray-300 rounded-full mb-2"></div>
                             <div className="flex justify-between items-center w-full px-4">
                                 <span className="font-bold text-gray-700 text-sm">
-                                    {carregando ? 'Carregando...' : `${unidades.length} unidades de saúde`}
+                                    {carregando ? 'Carregando...' : `${unidades.length} unidades de saude`}
                                 </span>
-                                <span className="text-gray-400 text-xs">{drawerAberto ? '▼ Fechar' : '▲ Ver lista'}</span>
+                                <span className="text-gray-400 text-xs">{drawerAberto ? 'Fechar' : 'Ver lista'}</span>
                             </div>
                         </div>
 
@@ -215,11 +208,7 @@ function App() {
                             {unidades.map((unidade) => (
                                 <div
                                     key={unidade.id}
-                                    className={`mb-2 p-3 rounded-xl border transition-colors cursor-pointer ${
-                                        unidadeSelecionada === unidade.id
-                                            ? 'border-blue-400 bg-blue-50'
-                                            : 'border-gray-200 bg-white'
-                                    }`}
+                                    className={`mb-2 p-3 rounded-xl border transition-colors cursor-pointer ${unidadeSelecionada === unidade.id ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white'}`}
                                     onClick={() => selecionarUnidade(unidade)}
                                 >
                                     <div className="flex items-center gap-2">
@@ -239,11 +228,11 @@ function App() {
                                             className="mt-1 text-xs text-green-600 underline block"
                                             onClick={(e) => e.stopPropagation()}
                                         >
-                                            📍 Como chegar
+                                            Como chegar
                                         </a>
                                         {ultimosReportes[unidade.id] ? (
                                             <p className="text-xs text-orange-600 mt-1 font-medium">
-                                                ⏱ {ultimosReportes[unidade.id]}
+                                                Espera: {ultimosReportes[unidade.id]}
                                             </p>
                                         ) : (
                                             <p className="text-xs text-gray-300 mt-1">Sem reporte recente</p>
