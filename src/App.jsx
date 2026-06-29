@@ -233,22 +233,25 @@ function App() {
                                     </div>
 
                                     <div className="ml-5 mt-0.5">
-                                        <span className="text-xs text-gray-500">{unidade.tipo}</span>
-                                        {unidade.endereco && (
-                                          {unidade.endereco && (
-                                            <p className="text-xs text-gray-400 mt-0.5">{unidade.endereco}</p>
-                                          )}
+                                      <span className="text-xs text-gray-500">{unidade.tipo}</span>
+                                      {unidade.endereco && (
+                                        <p className="text-xs text-gray-400 mt-0.5">{unidade.endereco}</p>
+                                      )}
 
-                                            href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="ml-5 mt-1 text-xs text-green-600 underline block"
-                                          >
-                                            📍 Como chegar
-                                          </a>
-                                        ) : (
-                                            <p className="text-xs text-gray-300 mt-1">Sem reporte recente</p>
-                                        )}
+                                        href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="ml-5 mt-1 text-xs text-green-600 underline block"
+                                      >
+                                        📍 Como chegar
+                                      </a>
+                                      {ultimosReportes[unidade.id] ? (
+                                        <p className="text-xs text-orange-600 mt-1 font-medium">
+                                          ⏱ {ultimosReportes[unidade.id]}
+                                        </p>
+                                      ) : (
+                                        <p className="text-xs text-gray-300 mt-1">Sem reporte recente</p>
+                                      )}
                                     </div>
 
                                     {/* Formulário de reporte */}
