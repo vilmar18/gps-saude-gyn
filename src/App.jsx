@@ -15,6 +15,13 @@ function criarIcone(cor) {
     })
 }
 
+const iconeUsuario = L.divIcon({
+    className: '',
+    html: `<div style="background-color: #2563eb; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 6px rgba(37,99,235,0.7);"></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+})
+
 const icones = {
     UPA:      criarIcone('#ef4444'),
     CAIS:     criarIcone('#3b82f6'),
@@ -37,13 +44,33 @@ const opcoesTempo = [
     'Mais de 2 horas',
 ]
 
-function ControlarMapa({ unidade }) {
+function calcularDistancia(lat1, lng1, lat2, lng2) {
+    const R = 6371
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLng = (lng2 - lng1) * Math.PI / 180
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng/2) * Math.sin(dLng/2)
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+}
+
+function formatarDistancia(km) {
+    if (km < 1) return `${Math.round(km * 1000)}m`
+    return `${km.toFixed(1)}km`
+}
+
+function ControlarMapa({ unidade, posicaoUsuario }) {
     const map = useMap()
     useEffect(() => {
         if (unidade) {
             map.flyTo([unidade.lat, unidade.lng], 15, { duration: 0.8 })
         }
     }, [unidade, map])
+    useEffect(() => {
+        if (posicaoUsuario && !unidade) {
+            map.flyTo([posicaoUsuario.lat, posicaoUsuario.lng], 14, { duration: 1 })
+        }
+    }, [posicaoUsuario, map])
     return null
 }
 
@@ -56,6 +83,8 @@ function App() {
     const [mensagem, setMensagem] = useState('')
     const [tela, setTela] = useState('mapa')
     const [drawerAberto, setDrawerAberto] = useState(false)
+    const [posicaoUsuario, setPosicaoUsuario] = useState(null)
+    const [unidadeMaisProxima, setUnidadeMaisProxima] = useState(null)
     const markerRefs = useRef({})
 
     useEffect(() => {
@@ -82,6 +111,34 @@ function App() {
         buscarReportes()
     }, [])
 
+    // GPS automatico ao carregar
+    useEffect(() => {
+        if (!navigator.geolocation) return
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const { latitude: lat, longitude: lng } = pos.coords
+                setPosicaoUsuario({ lat, lng })
+            },
+            (err) => console.log('GPS negado ou indisponivel:', err.message)
+        )
+    }, [])
+
+    // Calcula unidade mais proxima quando tem posicao e unidades
+    useEffect(() => {
+        if (!posicaoUsuario || unidades.length === 0) return
+        let menorDist = Infinity
+        let proxima = null
+        unidades.forEach((u) => {
+            const dist = calcularDistancia(posicaoUsuario.lat, posicaoUsuario.lng, u.lat, u.lng)
+            if (dist < menorDist) {
+                menorDist = dist
+                proxima = { ...u, distancia: dist }
+            }
+        })
+        setUnidadeMaisProxima(proxima)
+        setDrawerAberto(true)
+    }, [posicaoUsuario, unidades])
+
     async function enviarReporte(unidadeId, tempo) {
         const { error } = await supabase
             .from('reportes')
@@ -104,6 +161,16 @@ function App() {
             if (ref) ref.openPopup()
         }, 900)
     }
+
+    // Ordena unidades: mais proxima primeiro, resto por nome
+    const unidadesOrdenadas = posicaoUsuario
+        ? [...unidades]
+            .map((u) => ({
+                ...u,
+                distancia: calcularDistancia(posicaoUsuario.lat, posicaoUsuario.lng, u.lat, u.lng)
+            }))
+            .sort((a, b) => a.distancia - b.distancia)
+        : unidades
 
     return (
         <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
@@ -144,6 +211,12 @@ function App() {
                                 {tipo}
                             </span>
                         ))}
+                        {posicaoUsuario && (
+                            <span className="flex items-center gap-1.5 mt-1 border-t pt-1">
+                                <span className="w-2.5 h-2.5 rounded-full inline-block bg-blue-600"></span>
+                                Voce
+                            </span>
+                        )}
                     </div>
 
                     <MapContainer
@@ -156,7 +229,16 @@ function App() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution="© OpenStreetMap"
                         />
-                        <ControlarMapa unidade={unidadeFoco} />
+                        <ControlarMapa unidade={unidadeFoco} posicaoUsuario={posicaoUsuario} />
+
+                        {posicaoUsuario && (
+                            <Marker position={[posicaoUsuario.lat, posicaoUsuario.lng]} icon={iconeUsuario}>
+                                <Popup>
+                                    <span style={{ fontSize: '12px' }}>Voce esta aqui</span>
+                                </Popup>
+                            </Marker>
+                        )}
+
                         {unidades.map((unidade) => (
                             <Marker
                                 key={unidade.id}
@@ -167,10 +249,20 @@ function App() {
                                 <Popup>
                                     <div style={{ minWidth: '160px' }}>
                                         <strong style={{ fontSize: '13px' }}>{unidade.nome}</strong>
+                                        {unidadeMaisProxima && unidadeMaisProxima.id === unidade.id && (
+                                            <span style={{ fontSize: '10px', color: '#16a34a', marginLeft: '6px', fontWeight: 'bold' }}>
+                                                Mais proxima
+                                            </span>
+                                        )}
                                         <br />
                                         <span style={{ fontSize: '11px', color: '#6b7280' }}>{unidade.tipo}</span>
                                         {unidade.endereco && (
                                             <><br /><span style={{ fontSize: '11px', color: '#9ca3af' }}>{unidade.endereco}</span></>
+                                        )}
+                                        {posicaoUsuario && (
+                                            <><br /><span style={{ fontSize: '11px', color: '#6b7280' }}>
+                                                {formatarDistancia(calcularDistancia(posicaoUsuario.lat, posicaoUsuario.lng, unidade.lat, unidade.lng))} de voce
+                                            </span></>
                                         )}
                                         {ultimosReportes[unidade.id] && (
                                             <><br /><span style={{ fontSize: '11px', color: '#ea580c' }}>Espera: {ultimosReportes[unidade.id]}</span></>
@@ -216,7 +308,37 @@ function App() {
                         </div>
 
                         <div className="overflow-y-auto h-[calc(100%-72px)] px-3 pb-4">
-                            {unidades.map((unidade) => (
+
+                            {/* Banner unidade mais proxima */}
+                            {unidadeMaisProxima && (
+                                <div className="mb-3 p-3 rounded-xl bg-green-50 border border-green-300">
+                                    <p className="text-xs font-bold text-green-700 mb-1">Unidade mais proxima de voce</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`w-3 h-3 rounded-full flex-shrink-0 ${corPorTipo[unidadeMaisProxima.tipo] || 'bg-gray-400'}`}></span>
+                                        <span className="font-semibold text-sm text-gray-800">{unidadeMaisProxima.nome}</span>
+                                        <span className="text-xs text-gray-400 ml-auto">{formatarDistancia(unidadeMaisProxima.distancia)}</span>
+                                    </div>
+                                    {ultimosReportes[unidadeMaisProxima.id] && (
+                                        <p className="text-xs text-orange-600 mt-1 font-medium ml-5">
+                                            Espera: {ultimosReportes[unidadeMaisProxima.id]}
+                                        </p>
+                                    )}
+                                    <div className="ml-5 mt-2 flex flex-col gap-1">
+                                        <p className="text-xs font-semibold text-gray-600">Reportar tempo de espera:</p>
+                                        {opcoesTempo.map((opcao) => (
+                                            <button
+                                                key={opcao}
+                                                onClick={() => enviarReporte(unidadeMaisProxima.id, opcao)}
+                                                className="text-xs bg-white hover:bg-green-100 border border-green-200 rounded-lg p-2 text-left font-medium text-gray-700 transition-colors"
+                                            >
+                                                {opcao}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {unidadesOrdenadas.map((unidade) => (
                                 <div
                                     key={unidade.id}
                                     className={`mb-2 p-3 rounded-xl border transition-colors cursor-pointer ${unidadeSelecionada === unidade.id ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-white'}`}
@@ -225,6 +347,9 @@ function App() {
                                     <div className="flex items-center gap-2">
                                         <span className={`w-3 h-3 rounded-full flex-shrink-0 ${corPorTipo[unidade.tipo] || 'bg-gray-400'}`}></span>
                                         <span className="font-semibold text-sm text-gray-800">{unidade.nome}</span>
+                                        {unidade.distancia && (
+                                            <span className="text-xs text-gray-400 ml-auto">{formatarDistancia(unidade.distancia)}</span>
+                                        )}
                                     </div>
 
                                     <div className="ml-5 mt-0.5">
