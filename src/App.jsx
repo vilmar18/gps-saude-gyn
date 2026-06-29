@@ -176,14 +176,25 @@ function App() {
                                             <><br /><span style={{ fontSize: '11px', color: '#ea580c' }}>Espera: {ultimosReportes[unidade.id]}</span></>
                                         )}
                                         <br /><br />
-                                        <a
-                                            href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{ color: '#16a34a', fontSize: '13px', fontWeight: 'bold', textDecoration: 'underline' }}
-                                        >
-                                            Como chegar
-                                        </a>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <a
+                                                href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{ color: '#16a34a', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}
+                                            >
+                                                Google Maps
+                                            </a>
+                                            <span style={{ color: '#d1d5db' }}>|</span>
+                                            <a
+                                                href={`https://waze.com/ul?ll=${unidade.lat},${unidade.lng}&navigate=yes`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{ color: '#3b82f6', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}
+                                            >
+                                                Waze
+                                            </a>
+                                        </div>
                                     </div>
                                 </Popup>
                             </Marker>
@@ -221,26 +232,25 @@ function App() {
                                         {unidade.endereco && (
                                             <p className="text-xs text-gray-400 mt-0.5">{unidade.endereco}</p>
                                         )}
-                                        <a
-                                            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-
-                                                    href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    style={{ color: '#16a34a', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}
-                                                >
-                                                    Google Maps
-                                                </a>
-                                                <span style={{ color: '#d1d5db' }}>|</span>
-
-                                                    href={`https://waze.com/ul?ll=${unidade.lat},${unidade.lng}&navigate=yes`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    style={{ color: '#3b82f6', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline' }}
-                                                >
-                                                    Waze
-                                                </a>
-                                            </div>
+                                        <div className="flex gap-3 mt-1" onClick={(e) => e.stopPropagation()}>
+                                            <a
+                                                href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-xs text-green-600 underline font-medium"
+                                            >
+                                                Google Maps
+                                            </a>
+                                            <span className="text-gray-300 text-xs">|</span>
+                                            <a
+                                                href={`https://waze.com/ul?ll=${unidade.lat},${unidade.lng}&navigate=yes`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-xs text-blue-500 underline font-medium"
+                                            >
+                                                Waze
+                                            </a>
+                                        </div>
                                         {ultimosReportes[unidade.id] ? (
                                             <p className="text-xs text-orange-600 mt-1 font-medium">
                                                 Espera: {ultimosReportes[unidade.id]}
