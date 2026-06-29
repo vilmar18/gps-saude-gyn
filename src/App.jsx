@@ -172,14 +172,23 @@ function App() {
                                 icon={icones[unidade.tipo] || icones['UPA']}
                                 ref={(ref) => { if (ref) markerRefs.current[unidade.id] = ref }}
                             >
-                                <Popup>
-                                    <strong>{unidade.nome}</strong><br />
-                                    {unidade.tipo}
-                                    {unidade.endereco && <><br />{unidade.endereco}</>}
-                                    {ultimosReportes[unidade.id] && (
-                                        <><br /><span style={{ color: '#ea580c' }}>⏱ Espera: {ultimosReportes[unidade.id]}</span></>
-                                    )}
-                                </Popup>
+                               <Popup>
+                                   <strong>{unidade.nome}</strong><br />
+                                   {unidade.tipo}
+                                   {unidade.endereco && <><br />{unidade.endereco}</>}
+                                   {ultimosReportes[unidade.id] && (
+                                       <><br /><span style={{ color: '#ea580c' }}>⏱ Espera: {ultimosReportes[unidade.id]}</span></>
+                                   )}
+                                   <br />
+
+                                       href={`https://www.google.com/maps/dir/?api=1&destination=${unidade.lat},${unidade.lng}`}
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       style={{ color: '#16a34a', fontSize: '12px' }}
+                                   >
+                                       📍 Como chegar
+                                   </a>
+                               </Popup>
                             </Marker>
                         ))}
                     </MapContainer>
